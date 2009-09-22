@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 //
-// Copyright 2008,2009 Free Software Foundation, Inc.
+// Copyright 2008 Free Software Foundation, Inc.
 // 
 // This file is part of GNU Radio
 // 
@@ -21,23 +21,27 @@
 //
 
 #include <db_boards.h>
-#include <usrp/usrp_dbid.h>
-#include <usrp/db_basic.h>
-#include <usrp/db_tv_rx.h>
-#include <usrp/db_tv_rx_mimo.h>
-#include <usrp/db_dbs_rx.h>
-#include <usrp/db_flexrf.h>
-#include <usrp/db_flexrf_mimo.h>
-#include <usrp/db_xcvr2450.h>
-#include <usrp/db_dtt754.h>
-#include <usrp/db_dtt768.h>
-#include <cstdio>
+#include <usrp_dbid.h>
+#include <db_basic.h>
+#include <db_tv_rx.h>
+#include <db_dbs_rx.h>
+#include <db_flexrf.h>
+#include <db_flexrf_mimo.h>
+#include <db_xcvr2450.h>
+#include <db_wbx.h>
+#include <db_dtt754.h>
+#include <db_dtt768.h>
+#include <db_rfic.h>
+#include <iostream>
+
 
 std::vector<db_base_sptr>
 instantiate_dbs(int dbid, usrp_basic_sptr usrp, int which_side)
 {
   std::vector<db_base_sptr> db;
-
+  std::cout<<"the db id is : checking value "<<dbid<<std::endl;
+  printf("checking if it came here hhhghhg \n");
+  
   switch(dbid) {
 
   case(USRP_DBID_BASIC_TX):
@@ -72,15 +76,6 @@ instantiate_dbs(int dbid, usrp_basic_sptr usrp, int which_side)
     break;
   case(USRP_DBID_TV_RX_REV_3):
     db.push_back(db_base_sptr(new db_tv_rx(usrp, which_side, 44e6, 20e6)));
-    break;
-  case(USRP_DBID_TV_RX_MIMO):
-    db.push_back(db_base_sptr(new db_tv_rx_mimo(usrp, which_side, 43.75e6, 5.75e6)));
-    break;
-  case(USRP_DBID_TV_RX_REV_2_MIMO):
-    db.push_back(db_base_sptr(new db_tv_rx_mimo(usrp, which_side, 44e6, 20e6)));
-    break;
-  case(USRP_DBID_TV_RX_REV_3_MIMO):
-    db.push_back(db_base_sptr(new db_tv_rx_mimo(usrp, which_side, 44e6, 20e6)));
     break;
 
   case(USRP_DBID_FLEX_2400_TX):
@@ -197,6 +192,15 @@ instantiate_dbs(int dbid, usrp_basic_sptr usrp, int which_side)
     db.push_back(db_base_sptr(new db_dtt768(usrp, which_side)));
     break;
 
+  case(USRP_DBID_RFIC_TX):
+    db.push_back(db_base_sptr(new db_rfic_tx(usrp, which_side)));
+    break;
+
+  case(USRP_DBID_RFIC_RX):
+    db.push_back(db_base_sptr(new db_rfic_rx(usrp, which_side)));
+    break;
+
+
   case(-1):
     if (boost::dynamic_pointer_cast<usrp_basic_tx>(usrp)){
       db.push_back(db_base_sptr(new db_basic_tx(usrp, which_side)));
@@ -209,6 +213,7 @@ instantiate_dbs(int dbid, usrp_basic_sptr usrp, int which_side)
   
   case(-2):
   default:
+    fprintf(stderr, "\n\aWarning: Treatinl\n");
     if (boost::dynamic_pointer_cast<usrp_basic_tx>(usrp)){
       fprintf(stderr, "\n\aWarning: Treating daughterboard with invalid EEPROM contents as if it were a \"Basic Tx.\"\n");
       fprintf(stderr, "Warning: This is almost certainly wrong...  Use appropriate burn-*-eeprom utility.\n\n");

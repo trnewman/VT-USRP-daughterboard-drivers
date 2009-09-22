@@ -109,6 +109,7 @@ libusrp_la_common_SOURCES = 		\
 	db_boards.cc			\
 	db_base.cc			\
 	db_basic.cc			\
+	db_rfic.cc			\
 	db_tv_rx.cc			\
 	db_tv_rx_mimo.cc			\
 	db_flexrf.cc			\
@@ -146,6 +147,7 @@ noinst_HEADERS =			\
 	db_base_impl.h			\
 	db_boards.h			\
 	db_util.h			\
+	db_rfic.h			\
 	fusb.h				\
 	fusb_darwin.h			\
 	fusb_generic.h			\
