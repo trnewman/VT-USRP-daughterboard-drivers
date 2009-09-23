@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 //
-// Copyright 2008 Free Software Foundation, Inc.
+// Copyright 2008,2009 Free Software Foundation, Inc.
 // 
 // This file is part of GNU Radio
 // 
@@ -24,13 +24,15 @@
 #include <usrp_dbid.h>
 #include <db_basic.h>
 #include <db_tv_rx.h>
+#include <db_tv_rx_mimo.h>
 #include <db_dbs_rx.h>
 #include <db_flexrf.h>
 #include <db_flexrf_mimo.h>
 #include <db_xcvr2450.h>
-#include <db_wbx.h>
 #include <db_dtt754.h>
 #include <db_dtt768.h>
+#include <cstdio>
+
 #include <db_rfic.h>
 #include <iostream>
 
@@ -39,8 +41,6 @@ std::vector<db_base_sptr>
 instantiate_dbs(int dbid, usrp_basic_sptr usrp, int which_side)
 {
   std::vector<db_base_sptr> db;
-  std::cout<<"the db id is : checking value "<<dbid<<std::endl;
-  printf("checking if it came here hhhghhg \n");
   
   switch(dbid) {
 
@@ -77,7 +77,15 @@ instantiate_dbs(int dbid, usrp_basic_sptr usrp, int which_side)
   case(USRP_DBID_TV_RX_REV_3):
     db.push_back(db_base_sptr(new db_tv_rx(usrp, which_side, 44e6, 20e6)));
     break;
-
+  case(USRP_DBID_TV_RX_MIMO):
+    db.push_back(db_base_sptr(new db_tv_rx_mimo(usrp, which_side, 43.75e6, 5.75e6)));
+    break;
+  case(USRP_DBID_TV_RX_REV_2_MIMO):
+    db.push_back(db_base_sptr(new db_tv_rx_mimo(usrp, which_side, 44e6, 20e6)));
+    break;
+  case(USRP_DBID_TV_RX_REV_3_MIMO):
+    db.push_back(db_base_sptr(new db_tv_rx_mimo(usrp, which_side, 44e6, 20e6)));
+    break;
   case(USRP_DBID_FLEX_2400_TX):
     db.push_back(db_base_sptr(new db_flexrf_2400_tx(usrp, which_side)));
     break;
