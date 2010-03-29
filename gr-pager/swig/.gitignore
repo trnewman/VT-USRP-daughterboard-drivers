@@ -1,0 +1,6 @@
+/Makefile
+/Makefile.in
+/pager_swig.py
+/pager_swig.cc
+/*.pyc
+/run_tests

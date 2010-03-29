@@ -18,6 +18,10 @@
 // the Free Software Foundation, Inc., 51 Franklin Street,
 // Boston, MA 02110-1301, USA.
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <usrp/db_xcvr2450.h>
 #include <db_base_impl.h>
 #include <cmath>
@@ -318,8 +322,8 @@ xcvr2450::set_reg_lpf()
 {
   d_reg_lpf = (
 	     (d_rssi_hbw<<15)  |
-	     (d_txlpf_bw<<10)  |
-	     (d_rxlpf_bw<<9)   |
+	     (d_txlpf_bw<<9)  |
+	     (d_rxlpf_bw<<7)   |
 	     (d_rxlpf_fine<<4) | 7);
   send_reg(d_reg_lpf);
 }

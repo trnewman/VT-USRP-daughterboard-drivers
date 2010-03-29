@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /*
- * Copyright 2004,2005,2006,2007,2008 Free Software Foundation, Inc.
+ * Copyright 2004,2005,2006,2007,2008,2009 Free Software Foundation, Inc.
  * 
  * This file is part of GNU Radio
  * 
@@ -139,7 +139,9 @@
 #include <gr_stretch_ff.h>
 #include <gr_wavelet_ff.h>
 #include <gr_wvps_ff.h>
-
+#include <gr_copy.h>
+#include <gr_fll_band_edge_cc.h>
+#include <gr_additive_scrambler_bb.h>
 %}
 
 %include "gr_nop.i"
@@ -259,3 +261,6 @@
 %include "gr_stretch_ff.i"
 %include "gr_wavelet_ff.i"
 %include "gr_wvps_ff.i"
+%include "gr_copy.i"
+%include "gr_fll_band_edge_cc.i"
+%include "gr_additive_scrambler_bb.i"

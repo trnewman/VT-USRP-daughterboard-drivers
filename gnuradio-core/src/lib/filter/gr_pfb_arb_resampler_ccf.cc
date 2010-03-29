@@ -47,6 +47,8 @@ gr_pfb_arb_resampler_ccf::gr_pfb_arb_resampler_ccf (float rate,
 	      gr_make_io_signature (1, 1, sizeof(gr_complex))),
     d_updated (false)
 {
+  d_acc = 0; // start accumulator at 0
+
   /* The number of filters is specified by the user as the filter size;
      this is also the interpolation rate of the filter. We use it and the
      rate provided to determine the decimation rate. This acts as a
@@ -59,22 +61,26 @@ gr_pfb_arb_resampler_ccf::gr_pfb_arb_resampler_ccf (float rate,
   d_dec_rate = (unsigned int)floor(d_int_rate/rate);
   d_flt_rate = (d_int_rate/rate) - d_dec_rate;
 
-  // The accumulator keeps track of overflow to increment the stride correctly.
-  d_acc = 0;
-
   // Store the last filter between calls to work
   d_last_filter = 0;
+
+  d_start_index = 0;
   
   d_filters = std::vector<gr_fir_ccf*>(d_int_rate);
+  d_diff_filters = std::vector<gr_fir_ccf*>(d_int_rate);
 
   // Create an FIR filter for each channel and zero out the taps
   std::vector<float> vtaps(0, d_int_rate);
-  for(unsigned int i = 0; i < d_int_rate; i++) {
+  for(int i = 0; i < d_int_rate; i++) {
     d_filters[i] = gr_fir_util::create_gr_fir_ccf(vtaps);
+    d_diff_filters[i] = gr_fir_util::create_gr_fir_ccf(vtaps);
   }
 
   // Now, actually set the filters' taps
-  set_taps(taps);
+  std::vector<float> dtaps;
+  create_diff_taps(taps, dtaps);
+  set_taps(taps, d_taps, d_filters);
+  set_taps(dtaps, d_dtaps, d_diff_filters);
 }
 
 gr_pfb_arb_resampler_ccf::~gr_pfb_arb_resampler_ccf ()
@@ -85,20 +91,22 @@ gr_pfb_arb_resampler_ccf::~gr_pfb_arb_resampler_ccf ()
 }
 
 void
-gr_pfb_arb_resampler_ccf::set_taps (const std::vector<float> &taps)
+gr_pfb_arb_resampler_ccf::set_taps (const std::vector<float> &newtaps,
+				    std::vector< std::vector<float> > &ourtaps,
+				    std::vector<gr_fir_ccf*> &ourfilter)
 {
-  unsigned int i,j;
+  int i,j;
 
-  unsigned int ntaps = taps.size();
+  unsigned int ntaps = newtaps.size();
   d_taps_per_filter = (unsigned int)ceil((double)ntaps/(double)d_int_rate);
 
   // Create d_numchan vectors to store each channel's taps
-  d_taps.resize(d_int_rate);
-
+  ourtaps.resize(d_int_rate);
+  
   // Make a vector of the taps plus fill it out with 0's to fill
   // each polyphase filter with exactly d_taps_per_filter
   std::vector<float> tmp_taps;
-  tmp_taps = taps;
+  tmp_taps = newtaps;
   while((float)(tmp_taps.size()) < d_int_rate*d_taps_per_filter) {
     tmp_taps.push_back(0.0);
   }
@@ -106,19 +114,34 @@ gr_pfb_arb_resampler_ccf::set_taps (const std::vector<float> &taps)
   // Partition the filter
   for(i = 0; i < d_int_rate; i++) {
     // Each channel uses all d_taps_per_filter with 0's if not enough taps to fill out
-    d_taps[i] = std::vector<float>(d_taps_per_filter, 0);
+    ourtaps[d_int_rate-1-i] = std::vector<float>(d_taps_per_filter, 0);
     for(j = 0; j < d_taps_per_filter; j++) {
-      d_taps[i][j] = tmp_taps[i + j*d_int_rate];  // add taps to channels in reverse order
+      ourtaps[d_int_rate - 1 - i][j] = tmp_taps[i + j*d_int_rate];
     }
     
     // Build a filter for each channel and add it's taps to it
-    d_filters[i]->set_taps(d_taps[i]);
+    ourfilter[i]->set_taps(ourtaps[d_int_rate-1-i]);
   }
 
   // Set the history to ensure enough input items for each filter
-  set_history (d_taps_per_filter);
+  set_history (d_taps_per_filter + 1);
 
   d_updated = true;
+}
+
+void
+gr_pfb_arb_resampler_ccf::create_diff_taps(const std::vector<float> &newtaps,
+					   std::vector<float> &difftaps)
+{
+  // Calculate the differential taps (derivative filter) by taking the difference
+  // between two taps. Duplicate the last one to make both filters the same length.
+  float tap;
+  difftaps.clear();
+  for(unsigned int i = 0; i < newtaps.size()-1; i++) {
+    tap = newtaps[i+1] - newtaps[i];
+    difftaps.push_back(tap);
+  }
+  difftaps.push_back(tap);
 }
 
 void
@@ -148,7 +171,7 @@ gr_pfb_arb_resampler_ccf::general_work (int noutput_items,
     return 0;		     // history requirements may have changed.
   }
 
-  int i = 0, j, count = 0;
+  int i = 0, j, count = d_start_index;
   gr_complex o0, o1;
 
   // Restore the last filter position
@@ -159,39 +182,30 @@ gr_pfb_arb_resampler_ccf::general_work (int noutput_items,
 
     // start j by wrapping around mod the number of channels
     while((j < d_int_rate) && (i < noutput_items)) {
-      // Take the current filter output
+      // Take the current filter and derivative filter output
       o0 = d_filters[j]->filter(&in[count]);
+      o1 = d_diff_filters[j]->filter(&in[count]);
 
-      // Take the next filter output; wrap around to 0 if necessary
-      if(j+1 == d_int_rate)
-	// Use the sample of the next input item through the first filter
-	o1 = d_filters[0]->filter(&in[count+1]);
-      else {
-	// Use the sample from the current input item through the nex filter
-	o1 = d_filters[j+1]->filter(&in[count]);
-      }
-
-      //out[i] = o0;                     // nearest-neighbor approach
-      out[i] = o0 + (o1 - o0)*d_acc;     // linearly interpolate between samples
+      out[i] = o0 + o1*d_acc;     // linearly interpolate between samples
       i++;
-      
-      // Accumulate the position in the stream for the interpolated point.
-      // If it goes above 1, roll around to zero and increment the stride
-      // length this time by the decimation rate plus 1 for the increment
-      // due to the acculated position.
+
+      // Adjust accumulator and index into filterbank
       d_acc += d_flt_rate;
       j += d_dec_rate + (int)floor(d_acc);
       d_acc = fmodf(d_acc, 1.0);
     }
     if(i < noutput_items) {              // keep state for next entry
-      count++;                           // we have fully consumed another input
+      float ss = (int)(j / d_int_rate);  // number of items to skip ahead by
+      count += ss;                       // we have fully consumed another input
       j = j % d_int_rate;                // roll filter around
     }
   }
 
-  // Store the current filter position
+  // Store the current filter position and start of next sample
   d_last_filter = j;
+  d_start_index = std::max(0, count - ninput_items[0]);
 
-  consume_each(count);
+  // consume all we've processed but no more than we can
+  consume_each(std::min(count, ninput_items[0]));
   return i;
 }

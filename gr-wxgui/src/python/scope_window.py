@@ -82,6 +82,8 @@ class control_panel(wx.Panel):
 		WIDTH = 90
 		self.parent = parent
 		wx.Panel.__init__(self, parent, style=wx.SUNKEN_BORDER)
+		parent[SHOW_CONTROL_PANEL_KEY] = True
+		parent.subscribe(SHOW_CONTROL_PANEL_KEY, self.Show)
 		control_box = wx.BoxSizer(wx.VERTICAL)
 		##################################################
 		# Axes Options
@@ -374,6 +376,7 @@ class scope_window(wx.Panel, pubsub.pubsub):
 		sample_rate_key,
 		t_scale,
 		v_scale,
+		v_offset,
 		xy_mode,
 		ac_couple_key,
 		trigger_level_key,
@@ -413,8 +416,8 @@ class scope_window(wx.Panel, pubsub.pubsub):
 		self[X_PER_DIV_KEY] = v_scale
 		self[Y_PER_DIV_KEY] = v_scale
 		self[T_OFF_KEY] = 0
-		self[X_OFF_KEY] = 0
-		self[Y_OFF_KEY] = 0
+		self[X_OFF_KEY] = v_offset
+		self[Y_OFF_KEY] = v_offset
 		self[T_DIVS_KEY] = 8
 		self[X_DIVS_KEY] = 8
 		self[Y_DIVS_KEY] = 8

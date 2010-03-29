@@ -64,6 +64,9 @@ class BlockTreeWindow(gtk.VBox):
 		renderer = gtk.CellRendererText()
 		column = gtk.TreeViewColumn('Blocks', renderer, text=NAME_INDEX)
 		self.treeview.append_column(column)
+		#setup the search
+		self.treeview.set_enable_search(True)
+		self.treeview.set_search_equal_func(self._handle_search)
 		#try to enable the tooltips (available in pygtk 2.12 and above) 
 		try: self.treeview.set_tooltip_column(DOC_INDEX)
 		except: pass
@@ -145,6 +148,22 @@ class BlockTreeWindow(gtk.VBox):
 	############################################################
 	## Event Handlers
 	############################################################
+	def _handle_search(self, model, column, key, iter):
+		#determine which blocks match the search key
+		blocks = self.get_flow_graph().get_parent().get_blocks()
+		matching_blocks = filter(lambda b: key in b.get_key() or key in b.get_name().lower(), blocks)
+		#remove the old search category
+		try: self.treestore.remove(self._categories.pop((self._search_category, )))
+		except (KeyError, AttributeError): pass #nothing to remove
+		#create a search category
+		if not matching_blocks: return
+		self._search_category = 'Search: %s'%key
+		for block in matching_blocks: self.add_block(self._search_category, block)
+		#expand the search category
+		path = self.treestore.get_path(self._categories[(self._search_category, )])
+		self.treeview.collapse_all()
+		self.treeview.expand_row(path, open_all=False)
+
 	def _handle_drag_get_data(self, widget, drag_context, selection_data, info, time):
 		"""
 		Handle a drag and drop by setting the key to the selection object.

@@ -19,7 +19,7 @@
 # Boston, MA 02110-1301, USA.
 #
 
-include $(top_srcdir)/grc/Makefile.inc
+include $(top_srcdir)/Makefile.common
 
 ourdatadir = $(grc_blocksdir)
 dist_ourdata_DATA = \
@@ -34,6 +34,8 @@ dist_ourdata_DATA = \
 	blks2_cvsd_decode.xml \
 	blks2_dxpsk_demod.xml \
 	blks2_dxpsk_mod.xml \
+	blks2_dxpsk2_demod.xml \
+	blks2_dxpsk2_mod.xml \
 	blks2_error_rate.xml \
 	blks2_fm_deemph.xml \
 	blks2_fm_demod_cf.xml \
@@ -65,6 +67,7 @@ dist_ourdata_DATA = \
 	const_source_x.xml \
 	gr_add_const_vxx.xml \
 	gr_add_xx.xml \
+	gr_additive_scrambler_bb.xml \
 	gr_agc2_xx.xml \
 	gr_agc_xx.xml \
 	gr_and_xx.xml \
@@ -84,6 +87,7 @@ dist_ourdata_DATA = \
 	gr_complex_to_real.xml \
 	gr_conjugate_cc.xml \
 	gr_constellation_decoder_cb.xml \
+	gr_copy.xml \
 	gr_correlate_access_code_bb.xml \
 	gr_costas_loop_cc.xml \
 	gr_cpfsk_bc.xml \
@@ -105,6 +109,7 @@ dist_ourdata_DATA = \
 	gr_file_source.xml \
 	gr_filter_delay_fc.xml \
 	gr_fir_filter_xxx.xml \
+	gr_fll_band_edge_cc.xml \
 	gr_float_to_char.xml \
 	gr_float_to_complex.xml \
 	gr_float_to_short.xml \
@@ -144,6 +149,7 @@ dist_ourdata_DATA = \
 	gr_packed_to_unpacked_xx.xml \
 	gr_peak_detector2_fb.xml \
 	gr_peak_detector_xb.xml \
+	gr_pfb_clock_sync.xml \
 	gr_phase_modulator_fc.xml \
 	gr_pll_carriertracking_cc.xml \
 	gr_pll_freqdet_cf.xml \
@@ -166,6 +172,7 @@ dist_ourdata_DATA = \
 	gr_simple_squelch_cc.xml \
 	gr_single_pole_iir_filter_xx.xml \
 	gr_skiphead.xml \
+	gr_stream_mux.xml \
 	gr_stream_to_streams.xml \
 	gr_stream_to_vector.xml \
 	gr_streams_to_stream.xml \
@@ -227,6 +234,7 @@ dist_ourdata_DATA = \
 	wxgui_histosink2.xml \
 	wxgui_numbersink2.xml \
 	wxgui_scopesink2.xml \
+	wxgui_termsink.xml \
 	wxgui_waterfallsink2.xml \
 	xmlrpc_client.xml \
 	xmlrpc_server.xml

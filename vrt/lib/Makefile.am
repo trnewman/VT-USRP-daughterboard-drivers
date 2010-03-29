@@ -20,7 +20,8 @@ include $(top_srcdir)/Makefile.common
 AM_CPPFLAGS = \
     $(VRT_INCLUDES) \
     $(BOOST_CPPFLAGS) \
-    $(CPPUNIT_INCLUDES)
+    $(CPPUNIT_INCLUDES) \
+    $(GRUEL_INCLUDES)
 
 bin_PROGRAMS = 
 
@@ -31,7 +32,6 @@ libvrt_la_SOURCES = \
 	copiers.cc \
 	data_handler.cc \
 	expanded_header.cc \
-	quadradio.cc \
 	rx.cc \
 	rx_packet_handler.cc \
 	socket_rx_buffer.cc
@@ -41,10 +41,10 @@ libvrt_la_LIBADD =
 # Private headers not needed for above the API development
 noinst_HEADERS = \
 	data_handler.h \
-	expanded_header_cw_tables.h \
-	expanded_header_switch_body.h \
+	expanded_header_parse_switch_body.h \
+	expanded_header_unparse_switch_body.h \
 	socket_rx_buffer.h
 
 EXTRA_DIST = \
-	gen_cw_tables.py \
-	gen_switch_body.py
+	gen_parse_switch_body.py \
+	gen_unparse_switch_body.py

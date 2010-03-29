@@ -1,5 +1,5 @@
 #
-# Copyright 2005,2007,2009 Free Software Foundation, Inc.
+# Copyright 2005,2007,2009,2010 Free Software Foundation, Inc.
 # 
 # This file is part of GNU Radio
 # 
@@ -31,7 +31,9 @@ grblkspython_PYTHON =		\
 	am_demod.py		\
 	channel_model.py	\
 	dbpsk.py		\
+	dbpsk2.py		\
 	dqpsk.py		\
+	dqpsk2.py		\
 	d8psk.py		\
 	filterbank.py		\
 	fm_demod.py		\

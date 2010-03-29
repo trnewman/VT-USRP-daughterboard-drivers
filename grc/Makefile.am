@@ -19,13 +19,12 @@
 # Boston, MA 02110-1301, USA.
 #
 
-include $(top_srcdir)/grc/Makefile.inc
+include $(top_srcdir)/Makefile.common
 
 if PYTHON
 SUBDIRS = \
 	base \
 	blocks \
-	examples \
 	grc_gnuradio \
 	gui \
 	python \
@@ -36,7 +35,7 @@ if XDG_UTILS
 SUBDIRS += freedesktop
 endif
 
-ourpythondir = $(grc_src_prefix)
+ourpythondir = $(pkgpythondir)/grc
 ourpython_PYTHON = __init__.py
 
 etcdir = $(gr_prefsdir)

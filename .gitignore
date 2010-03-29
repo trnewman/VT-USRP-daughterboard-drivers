@@ -16,6 +16,7 @@
 *.lo
 *.py[oc]
 *.gz
+*.exe
 *.patch
 *~
 \#*#
@@ -23,6 +24,7 @@
 .libs
 TAGS
 *-stamp
+!.gitattributes
 !.gitignore
 make.log
 /configure

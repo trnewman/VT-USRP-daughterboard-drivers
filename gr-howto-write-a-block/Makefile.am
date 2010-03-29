@@ -23,11 +23,19 @@ ACLOCAL_AMFLAGS = -I config
 
 include $(top_srcdir)/Makefile.common
 
-EXTRA_DIST = bootstrap configure config.h.in \
-	Makefile.swig Makefile.swig.gen.t
+EXTRA_DIST = \
+	bootstrap \
+	configure \
+	config.h.in \
+	Makefile.swig \
+	Makefile.swig.gen.t \
+	version.sh \
+	README \
+	README.hacking
 
-SUBDIRS = config src
-DIST_SUBDIRS = config src doc
+SUBDIRS = config lib swig python grc apps
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
+
+DISTCLEANFILES = gr-howto-write-a-block*.tar.gz

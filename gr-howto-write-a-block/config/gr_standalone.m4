@@ -31,12 +31,6 @@ m4_define([GR_STANDALONE],
   AC_CONFIG_SRCDIR([config/gr_standalone.m4])
   AM_CONFIG_HEADER(config.h)
 
-  AC_CANONICAL_BUILD
-  AC_CANONICAL_HOST
-  AC_CANONICAL_TARGET
-
-  AM_INIT_AUTOMAKE
-
   dnl Remember if the user explicity set CXXFLAGS
   if test -n "${CXXFLAGS}"; then
     user_set_cxxflags=yes
@@ -130,4 +124,12 @@ m4_define([GR_STANDALONE],
     [enable_python=yes]  
   )
   AM_CONDITIONAL([PYTHON], [test x$enable_python = xyes])
+
+  dnl Define where to look for cppunit includes and libs
+  dnl sets CPPUNIT_CFLAGS and CPPUNIT_LIBS
+  dnl Try using pkg-config first, then fall back to cppunit-config.
+  PKG_CHECK_EXISTS(cppunit,
+    [PKG_CHECK_MODULES(CPPUNIT, cppunit >= 1.9.14)],
+    [AM_PATH_CPPUNIT([1.9.14],[],
+		     [AC_MSG_ERROR([GNU Radio requires cppunit.  Stop])])])
 ])

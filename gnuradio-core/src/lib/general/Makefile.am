@@ -34,6 +34,7 @@ EXTRA_DIST = 				\
 	gr_constants.cc.in			
 
 libgeneral_la_SOURCES = 		\
+	gr_additive_scrambler_bb.cc	\
 	gr_agc_cc.cc                	\
 	gr_agc_ff.cc                	\
 	gr_agc2_cc.cc                	\
@@ -51,6 +52,7 @@ libgeneral_la_SOURCES = 		\
 	gr_complex_to_interleaved_short.cc \
 	gr_complex_to_xxx.cc		\
 	gr_conjugate_cc.cc		\
+	gr_copy.cc			\
 	gr_constellation_decoder_cb.cc	\
 	gr_correlate_access_code_bb.cc	\
 	gr_costas_loop_cc.cc		\
@@ -75,6 +77,7 @@ libgeneral_la_SOURCES = 		\
 	gr_fft_vcc_fftw.cc		\
 	gr_fft_vfc.cc			\
 	gr_firdes.cc			\
+	gr_fll_band_edge_cc.cc		\
 	gr_float_to_char.cc		\
 	gr_float_to_complex.cc		\
 	gr_float_to_short.cc		\
@@ -186,6 +189,7 @@ libgeneral_qa_la_SOURCES = 		\
 	qa_gri_lfsr.cc
 
 grinclude_HEADERS = 			\
+	gr_additive_scrambler_bb.h	\
 	gr_agc_cc.h                 	\
 	gr_agc_ff.h                 	\
 	gr_agc2_cc.h                	\
@@ -204,6 +208,7 @@ grinclude_HEADERS = 			\
 	gr_complex_to_xxx.h		\
 	gr_conjugate_cc.h		\
 	gr_constellation_decoder_cb.h	\
+	gr_copy.h			\
 	gr_correlate_access_code_bb.h	\
 	gr_costas_loop_cc.h		\
 	gr_count_bits.h			\
@@ -227,6 +232,7 @@ grinclude_HEADERS = 			\
 	gr_fft_vcc_fftw.h		\
 	gr_fft_vfc.h			\
 	gr_firdes.h			\
+	gr_fll_band_edge_cc.h		\
 	gr_float_to_char.h		\
 	gr_float_to_complex.h		\
 	gr_float_to_short.h		\
@@ -356,6 +362,7 @@ noinst_HEADERS = 			\
 if PYTHON
 swiginclude_HEADERS =			\
 	general.i			\
+	gr_additive_scrambler_bb.i	\
 	gr_agc_cc.i                 	\
 	gr_agc_ff.i                 	\
 	gr_agc2_cc.i                 	\
@@ -373,6 +380,7 @@ swiginclude_HEADERS =			\
 	gr_complex_to_xxx.i		\
 	gr_conjugate_cc.i		\
 	gr_constellation_decoder_cb.i	\
+	gr_copy.i			\
 	gr_correlate_access_code_bb.i	\
 	gr_costas_loop_cc.i		\
 	gr_cpfsk_bc.i			\
@@ -393,6 +401,7 @@ swiginclude_HEADERS =			\
 	gr_fft_vcc.i			\
 	gr_fft_vfc.i			\
 	gr_firdes.i			\
+	gr_fll_band_edge_cc.i		\
 	gr_float_to_char.i		\
 	gr_float_to_complex.i		\
 	gr_float_to_short.i		\
